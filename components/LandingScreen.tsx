@@ -173,7 +173,7 @@ export default function LandingScreen({ isRevealed, musicEnabled, onMusicToggle 
           }}
         >
           {/* Lokesh */}
-          <div className="flex justify-center" style={{ overflow: 'hidden' }}>
+          <div className="flex justify-center">
             {'Lokesh'.split('').map((char, i) => (
               <motion.span
                 key={`l-${i}`}
@@ -206,7 +206,7 @@ export default function LandingScreen({ isRevealed, musicEnabled, onMusicToggle 
           </motion.div>
 
           {/* BhavyaSri */}
-          <div className="flex justify-center" style={{ overflow: 'hidden' }}>
+          <div className="flex justify-center">
             {'BhavyaSri'.split('').map((char, i) => (
               <motion.span
                 key={`b-${i}`}
