@@ -116,14 +116,32 @@ export default function LandingScreen({ isRevealed, musicEnabled, onMusicToggle 
       >
         {/* Top ornament */}
         <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: isRevealed ? 1 : 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
-          className="flex items-center justify-center gap-3 mb-6"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: isRevealed ? 1 : 0, scale: isRevealed ? 1 : 0.8 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="flex items-center justify-center gap-3 mb-4"
         >
-          <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, transparent, var(--gold))' }} />
-          <span style={{ color: 'var(--gold)', fontSize: '1rem' }}>✦</span>
-          <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, var(--gold), transparent)' }} />
+          <div style={{ height: 1, width: 40, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.5))' }} />
+          <span style={{ color: 'var(--gold)', fontSize: '0.5rem' }}>✦</span>
+          <div style={{ height: 1, width: 40, background: 'linear-gradient(90deg, rgba(212,175,55,0.5), transparent)' }} />
+        </motion.div>
+
+        {/* Telugu Header */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isRevealed ? 1 : 0 }}
+          transition={{ duration: 1, delay: 0.6 }}
+          style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            color: 'var(--gold-light)',
+            fontSize: '0.95rem',
+            lineHeight: 1.5,
+            marginBottom: 16,
+            textShadow: '0 2px 8px rgba(0,0,0,0.8)'
+          }}
+        >
+          పెట్టుగాని వారి<br />
+          వివాహ మహోత్సవ ఆహ్వానము
         </motion.div>
 
         {/* Pre-text */}
@@ -143,11 +161,8 @@ export default function LandingScreen({ isRevealed, musicEnabled, onMusicToggle 
           JOIN US IN CELEBRATING<br />THE WEDDING OF
         </motion.p>
 
-        {/* Big Names */}
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: isRevealed ? 1 : 0, scale: isRevealed ? 1 : 0.9 }}
-          transition={{ duration: 1.2, delay: 0.3 }}
+        {/* Big Names (Typewriter) */}
+        <h1
           style={{
             fontFamily: 'Great Vibes, cursive',
             color: 'var(--cream)',
@@ -157,18 +172,53 @@ export default function LandingScreen({ isRevealed, musicEnabled, onMusicToggle 
             textShadow: '0 4px 15px rgba(0,0,0,0.8)',
           }}
         >
-          Lokesh
-          <div style={{
-            fontFamily: 'Cormorant Garamond, serif',
-            fontSize: 'clamp(2rem, 8vw, 4rem)',
-            color: 'var(--gold)',
-            fontStyle: 'italic',
-            margin: '4px 0'
-          }}>
-            &amp;
+          {/* Lokesh */}
+          <div className="flex justify-center" style={{ overflow: 'hidden' }}>
+            {'Lokesh'.split('').map((char, i) => (
+              <motion.span
+                key={`l-${i}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                transition={{ duration: 0.4, delay: 1.2 + i * 0.12 }}
+              >
+                {char}
+              </motion.span>
+            ))}
           </div>
-          BhavyaSri
-        </motion.h1>
+
+          {/* Ampersand */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+            transition={{ duration: 0.8, delay: 1.2 + 6 * 0.12 }}
+            style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontSize: 'clamp(3rem, 10vw, 5rem)',
+              color: 'var(--gold-light)',
+              fontStyle: 'italic',
+              margin: '6px 0',
+              textShadow: '0 0 15px rgba(212,175,55,0.4)',
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            &amp;
+          </motion.div>
+
+          {/* BhavyaSri */}
+          <div className="flex justify-center" style={{ overflow: 'hidden' }}>
+            {'BhavyaSri'.split('').map((char, i) => (
+              <motion.span
+                key={`b-${i}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                transition={{ duration: 0.4, delay: 1.2 + 7 * 0.12 + i * 0.12 }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </div>
+        </h1>
 
         {/* Caption */}
         <motion.p

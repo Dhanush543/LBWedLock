@@ -73,6 +73,7 @@ interface ScratchCircleProps {
 function ScratchCircle({ id, hiddenValue, label, onComplete, disabled }: ScratchCircleProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isScratched, setIsScratched] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const isDrawing = useRef(false);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
 
@@ -105,10 +106,10 @@ function ScratchCircle({ id, hiddenValue, label, onComplete, disabled }: Scratch
         ctx.fillRect(x, y, 1, 1);
       }
 
-      ctx.fillStyle = 'rgba(0,0,0,0.22)';
-      ctx.font = 'bold 9px Lato';
+      ctx.fillStyle = 'rgba(26, 5, 5, 0.9)'; // High contrast dark maroon
+      ctx.font = 'bold 12px Lato';
       ctx.textAlign = 'center';
-      ctx.fillText('SCRATCH', W / 2, H / 2 + 4);
+      ctx.fillText('SCRATCH', W / 2, H / 2 + 5);
     }, 50);
   }, []);
 
@@ -156,6 +157,7 @@ function ScratchCircle({ id, hiddenValue, label, onComplete, disabled }: Scratch
   const onStart = (e: React.MouseEvent | React.TouchEvent) => {
     if (disabled) return;
     e.preventDefault();
+    setHasInteracted(true);
     isDrawing.current = true;
     lastPos.current = getPos(e);
   };
@@ -198,18 +200,35 @@ function ScratchCircle({ id, hiddenValue, label, onComplete, disabled }: Scratch
         </motion.span>
 
         {!isScratched && (
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
-            style={{ touchAction: 'none', borderRadius: '50%' }}
-            onMouseDown={onStart}
-            onMouseMove={onMove}
-            onMouseUp={onEnd}
-            onMouseLeave={onEnd}
-            onTouchStart={onStart}
-            onTouchMove={onMove}
-            onTouchEnd={onEnd}
-          />
+          <>
+            <canvas
+              ref={canvasRef}
+              className="absolute inset-0 w-full h-full cursor-crosshair"
+              style={{ touchAction: 'none', borderRadius: '50%' }}
+              onMouseDown={onStart}
+              onMouseMove={onMove}
+              onMouseUp={onEnd}
+              onMouseLeave={onEnd}
+              onTouchStart={onStart}
+              onTouchMove={onMove}
+              onTouchEnd={onEnd}
+            />
+            {id === 'date' && !hasInteracted && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, x: [-15, 15, -15], y: [-5, 5, -5] }}
+                transition={{ 
+                  opacity: { delay: 1, duration: 0.8 }, 
+                  x: { repeat: Infinity, duration: 1.5, ease: 'easeInOut' },
+                  y: { repeat: Infinity, duration: 2.1, ease: 'easeInOut' }
+                }}
+                className="absolute z-10 pointer-events-none"
+                style={{ top: '50%', left: '42%' }}
+              >
+                <span style={{ fontSize: '1.4rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.6))' }}>👆</span>
+              </motion.div>
+            )}
+          </>
         )}
       </div>
       <p style={{

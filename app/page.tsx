@@ -26,23 +26,45 @@ export default function Home() {
     // Initialize audio
     shlokaAudioRef.current = new Audio('/audio/shlokam.mp3');
     
-    // Add smooth fade-out for the last 2 seconds of the shlokam
-    shlokaAudioRef.current.addEventListener('timeupdate', () => {
-      const audio = shlokaAudioRef.current;
-      if (!audio || !audio.duration) return;
-      
-      const fadeDuration = 2.0;
-      const timeLeft = audio.duration - audio.currentTime;
-      
-      if (timeLeft <= fadeDuration && timeLeft > 0) {
-        // Decrease volume proportionally from 1 down to 0
-        audio.volume = Math.max(0, timeLeft / fadeDuration);
-      }
-    });
-    
     // Main background music
     mainAudioRef.current = new Audio('/audio/bgm.mp3');
     mainAudioRef.current.loop = true;
+    mainAudioRef.current.volume = 0; // Force start at 0 so it fades in smoothly
+    
+    // Create a 60fps butter-smooth volume crossfade loop
+    let fadeFrame: number;
+    const updateVolumes = () => {
+      // 1. Shloka Fade Out (last 3 seconds)
+      const sAudio = shlokaAudioRef.current;
+      if (sAudio && sAudio.duration) {
+        const sFade = 3.0;
+        const sLeft = sAudio.duration - sAudio.currentTime;
+        if (sLeft <= sFade && sLeft > 0) {
+          sAudio.volume = Math.max(0, sLeft / sFade);
+        }
+      }
+
+      // 2. BGM Fade In / Fade Out (for looping)
+      const mAudio = mainAudioRef.current;
+      if (mAudio && mAudio.duration && !mAudio.paused) {
+        const mFade = 3.0;
+        const mLeft = mAudio.duration - mAudio.currentTime;
+        if (mLeft <= mFade && mLeft > 0) {
+          // Crossfade out at end of loop
+          mAudio.volume = Math.max(0, mLeft / mFade);
+        } else if (mAudio.currentTime < mFade) {
+          // Crossfade in at start
+          mAudio.volume = Math.min(1, mAudio.currentTime / mFade);
+        } else {
+          mAudio.volume = 1;
+        }
+      }
+
+      fadeFrame = requestAnimationFrame(updateVolumes);
+    };
+    
+    // Start the volume manager
+    fadeFrame = requestAnimationFrame(updateVolumes);
 
     // When shloka finishes, transition to main music
     shlokaAudioRef.current.onended = () => {
@@ -51,6 +73,7 @@ export default function Home() {
     };
 
     return () => {
+      cancelAnimationFrame(fadeFrame);
       shlokaAudioRef.current?.pause();
       mainAudioRef.current?.pause();
     };

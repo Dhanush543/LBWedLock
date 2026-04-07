@@ -129,7 +129,7 @@ export default function EventDetails() {
               <div
                 style={{
                   position: 'absolute',
-                  left: 46,
+                  left: 44,
                   top: 8,
                   bottom: 8,
                   width: 1,
@@ -143,7 +143,8 @@ export default function EventDetails() {
                   const isLast = i === events.length - 1;
 
                   return (
-                    <div
+                    <motion.div
+                      layout
                       key={event.id}
                       id={`event-${event.id}`}
                       onClick={() => setActiveId(event.id)}
@@ -201,6 +202,7 @@ export default function EventDetails() {
                       <div style={{ position: 'relative', zIndex: 1 }}>
                         {/* Title */}
                         <motion.h3
+                          layout
                           animate={{
                             color: isActive ? event.color : 'rgba(253,248,240,0.6)',
                           }}
@@ -219,7 +221,7 @@ export default function EventDetails() {
                         </motion.h3>
 
                         {/* Date & Time */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 3 }}>
+                        <motion.div layout style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 3 }}>
                           <p
                             style={{
                               fontFamily: 'Lato, sans-serif',
@@ -252,10 +254,11 @@ export default function EventDetails() {
                           >
                             {event.time}
                           </span>
-                        </div>
+                        </motion.div>
 
                         {/* Venue */}
-                        <p
+                        <motion.p
+                          layout
                           style={{
                             fontFamily: 'Cormorant Garamond, serif',
                             fontSize: '0.92rem',
@@ -266,17 +269,18 @@ export default function EventDetails() {
                           }}
                         >
                           {event.venue}
-                        </p>
+                        </motion.p>
 
                         {/* Buttons — only for active */}
-                        <AnimatePresence>
+                        <AnimatePresence mode="popLayout">
                           {isActive && (
                             <motion.div
+                              layout
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: 4 }}
+                              exit={{ opacity: 0, y: -8 }}
                               transition={{ duration: 0.3 }}
-                              style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}
+                              style={{ display: 'flex', flexWrap: 'wrap', gap: 10, overflow: 'hidden' }}
                             >
                               {event.id === 'haldi' && (
                                 <button
@@ -323,7 +327,7 @@ export default function EventDetails() {
                           )}
                         </AnimatePresence>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
