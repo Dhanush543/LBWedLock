@@ -1,26 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&family=Great+Vibes&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --gold: #D4AF37;
+  --gold-light: #F0D060;
+  --gold-dark: #B8960C;
+  --maroon: #8B1A1A;
+  --maroon-dark: #5C0A0A;
+  --maroon-light: #B22222;
+  --cream: #FDF8F0;
+  --cream-dark: #F5EDD8;
+  --midnight: #1A0505;
+  --midnight-accent: #2C1010;
+  --brown: #2C1810;
+  --accent: #C9A96E;
+  --pink: #FFB6C1;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Lato', sans-serif;
+  background-color: #1A0505;
+  color: var(--cream);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* ── Shimmer Text ── */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--gold-dark) 0%,
+    var(--gold-light) 40%,
+    var(--gold) 60%,
+    var(--gold-dark) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ── Gold Divider ── */
+.gold-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ── Glassmorphism Card ── */
+.glass-card {
+  background: rgba(253, 248, 240, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 32px rgba(139, 26, 26, 0.1), 0 2px 8px rgba(212, 175, 55, 0.15);
+}
+
+/* ── Floating Particle / Petal ── */
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.4; }
+  100% {
+    transform: translateY(-10vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.15); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.15); }
+  70% { transform: scale(1); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes rotateGlow {
+  0% { filter: drop-shadow(0 0 6px var(--gold)); }
+  50% { filter: drop-shadow(0 0 16px var(--gold-light)); }
+  100% { filter: drop-shadow(0 0 6px var(--gold)); }
+}
+
+/* ── Countdown Card Flip ── */
+@keyframes flipDown {
+  0% { transform: rotateX(90deg); opacity: 0; }
+  100% { transform: rotateX(0deg); opacity: 1; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+/* ── Section headings ── */
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 600;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* ── Premium Section Layout Utilities ── */
+
+/* Section-level vertical breathing room */
+.section-gap {
+  padding: 40px 28px;
+}
+
+/* Premium Section Border - Dark mode glassmorphism */
+.premium-border {
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 28px;
+  background: rgba(26, 10, 10, 0.4);
+  backdrop-filter: blur(12px);
+  padding: 36px 20px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+/* Centered content column */
+.section-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+
+/* Wide container for bigger sections */
+.section-container-wide {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* Small uppercase tracking label */
+.section-label {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.38em;
+  color: var(--gold-light);
+  opacity: 1;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Large serif section title */
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 8vw, 4rem);
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+/* Gold ornament line with diamond */
+.section-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.section-ornament::before,
+.section-ornament::after {
+  content: '';
+  display: block;
+  height: 1px;
+  width: 50px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6));
+}
+.section-ornament::after {
+  background: linear-gradient(90deg, rgba(212,175,55,0.6), transparent);
+}
+.section-ornament::before {
+  content: '';
+}
+
+/* ── Great Vibes font helper ── */
+.great-vibes {
+  font-family: 'Great Vibes', cursive;
+}
+
+
+/* ── Velvet curtain gradient ── */
+.curtain-texture {
+  background: linear-gradient(
+    135deg,
+    #5C0A0A 0%,
+    #8B1A1A 20%,
+    #6B0E0E 35%,
+    #A82020 50%,
+    #6B0E0E 65%,
+    #8B1A1A 80%,
+    #5C0A0A 100%
+  );
+}
+
+.curtain-sheen {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212,175,55,0.15) 30%,
+    rgba(212,175,55,0.3) 50%,
+    rgba(212,175,55,0.15) 70%,
+    transparent 100%
+  );
+}
+
+/* ── Mobile performance optimizations ── */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* ── Loading Screen ── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+@keyframes progress-fill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.loading-ring-outer {
+  border: 2px solid rgba(212, 175, 55, 0.2);
+  border-top-color: var(--gold);
+  animation: spin-slow 2s linear infinite;
+}
+
+.loading-ring-inner {
+  border: 2px solid rgba(139, 26, 26, 0.2);
+  border-bottom-color: var(--maroon);
+  animation: spin-reverse 1.5s linear infinite;
+}
+
+/* ── Swipe Gallery ── */
+.gallery-track {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.gallery-track::-webkit-scrollbar { display: none; }
+.gallery-item {
+  scroll-snap-align: start;
 }
