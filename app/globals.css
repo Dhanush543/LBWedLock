@@ -24,15 +24,19 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+  height: 100%;
+  overflow: hidden !important;
+  -webkit-overflow-scrolling: auto;
 }
 
 body {
   font-family: 'Lato', sans-serif;
   background-color: #1A0505;
   color: var(--cream);
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden !important;
+  margin: 0;
+  padding: 0;
 }
 
 h1, h2, h3, h4 {

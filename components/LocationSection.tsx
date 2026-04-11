@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import ParticleBackground from './ParticleBackground';
 import Image from 'next/image';
 
 const VENUE_URL = 'https://maps.app.goo.gl/z7r6af1iSYHXfgni8?g_st=aw';
@@ -11,33 +12,39 @@ export default function LocationSection() {
   const inView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="location" ref={sectionRef} className="section-gap">
+    <section 
+      id="location" 
+      ref={sectionRef} 
+      className="relative flex items-center justify-center overflow-hidden"
+      style={{ height: '100svh', width: '100%' }}
+    >
+      <ParticleBackground />
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8 }}
-        className="section-container"
+        className="section-container relative z-10 flex flex-col items-center justify-center h-full max-h-screen py-4"
       >
         {/* Gold ornament + heading — outside the card */}
-        <div className="flex items-center justify-center gap-4 mb-5">
-          <div style={{ height: 1, width: 40, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.5))' }} />
+        <div className="flex items-center justify-center gap-3 mb-3 md:mb-5">
+          <div style={{ height: 1, width: 30, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.5))' }} />
           <span style={{ color: 'var(--gold)', fontSize: '0.6rem' }}>✦</span>
-          <div style={{ height: 1, width: 40, background: 'linear-gradient(90deg, rgba(212,175,55,0.5), transparent)' }} />
+          <div style={{ height: 1, width: 30, background: 'linear-gradient(90deg, rgba(212,175,55,0.5), transparent)' }} />
         </div>
-        <div className="text-center mb-6">
-          <p className="section-label">FIND US</p>
+        <div className="text-center mb-4 md:mb-6">
+          <p className="section-label" style={{ fontSize: '0.6rem' }}>FIND US</p>
           <h2
-            className="section-title mt-2"
-            style={{ fontSize: 'clamp(2rem, 7vw, 3rem)', whiteSpace: 'nowrap' }}
+            className="section-title mt-1"
+            style={{ fontSize: 'clamp(1.5rem, 5vh, 2.4rem)', whiteSpace: 'nowrap' }}
           >
             Wedding Venue
           </h2>
         </div>
 
-        <div className="premium-border" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="premium-border w-full max-w-[420px]" style={{ padding: 0, overflow: 'hidden', flexShrink: 1 }}>
 
           {/* ── Sketch Image Hero ── */}
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden' }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '21/9', overflow: 'hidden' }}>
             <Image
               src="/images/venue-sketch.png"
               alt="SAI ITA Convention Hall — pencil sketch"
@@ -63,19 +70,19 @@ export default function LocationSection() {
             <div
               style={{
                 position: 'absolute',
-                bottom: 20,
-                left: 24,
-                right: 24,
+                bottom: 12,
+                left: 20,
+                right: 20,
               }}
             >
               <p
                 style={{
                   fontFamily: 'Lato, sans-serif',
-                  fontSize: '0.58rem',
+                  fontSize: '0.52rem',
                   letterSpacing: '0.3em',
                   color: 'rgba(212,175,55,0.8)',
                   textTransform: 'uppercase',
-                  marginBottom: 4,
+                  marginBottom: 2,
                 }}
               >
                 THE VENUE
@@ -83,10 +90,10 @@ export default function LocationSection() {
               <h3
                 style={{
                   fontFamily: 'Cormorant Garamond, serif',
-                  fontSize: 'clamp(1.3rem, 5vw, 1.8rem)',
+                  fontSize: 'clamp(1.2rem, 4vh, 1.5rem)',
                   fontWeight: 600,
                   color: '#FDF8F0',
-                  lineHeight: 1.15,
+                  lineHeight: 1.1,
                 }}
               >
                 SAI ITA Convention Hall
@@ -95,18 +102,18 @@ export default function LocationSection() {
           </div>
 
           {/* ── Content Block ── */}
-          <div style={{ padding: '28px 24px 32px' }}>
+          <div style={{ padding: '20px 20px 24px' }}>
 
             {/* Address */}
-            <div style={{ marginBottom: 24, textAlign: 'center' }}>
+            <div style={{ marginBottom: 18, textAlign: 'center' }}>
               <p
                 style={{
                   fontFamily: 'Lato, sans-serif',
-                  fontSize: '0.58rem',
+                  fontSize: '0.55rem',
                   letterSpacing: '0.25em',
                   color: 'rgba(212,175,55,0.6)',
                   textTransform: 'uppercase',
-                  marginBottom: 8,
+                  marginBottom: 4,
                 }}
               >
                 Address
@@ -114,9 +121,9 @@ export default function LocationSection() {
               <p
                 style={{
                   fontFamily: 'Cormorant Garamond, serif',
-                  fontSize: '1.2rem',
+                  fontSize: '1.05rem',
                   color: 'var(--cream)',
-                  lineHeight: 1.5,
+                  lineHeight: 1.4,
                   opacity: 0.9,
                 }}
               >
@@ -124,33 +131,6 @@ export default function LocationSection() {
               </p>
             </div>
 
-            {/* Open Maps pill - Centered */}
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <motion.a
-                href={VENUE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileTap={{ scale: 0.95 }}
-                whileHover={{ scale: 1.03 }}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  background: 'linear-gradient(135deg, var(--maroon-dark), var(--maroon))',
-                  color: 'var(--gold)',
-                  borderRadius: 999,
-                  padding: '12px 32px',
-                  textDecoration: 'none',
-                  fontFamily: 'Lato, sans-serif',
-                  fontSize: '0.65rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.2em',
-                  boxShadow: '0 4px 20px rgba(139,26,26,0.35), inset 0 0 0 1px rgba(212,175,55,0.2)',
-                }}
-              >
-                <span>OPEN MAPS</span>
-              </motion.a>
-            </div>
 
           </div>
         </div>

@@ -6,36 +6,38 @@ import { motion, Variants, AnimatePresence } from 'framer-motion';
 interface CurtainRevealProps {
   onRevealComplete: () => void;
   children: React.ReactNode;
+  isExiting?: boolean;
 }
 
-const CurtainHalf = ({ isRevealed, isLeft = true }: { isRevealed: boolean; isLeft?: boolean }) => {
-  const transition = { duration: 2.8, ease: [0.5, 0, 0.2, 1] as const }; // Cinematic theater ease, much slower
+const CurtainHalf = ({ isRevealed, isLeft = true, isExiting }: { isRevealed: boolean; isLeft?: boolean; isExiting?: boolean }) => {
+  const transition = { duration: 2.8, ease: [0.5, 0, 0.2, 1] as const };
+
+  // Helper to generate coordinates based on which side we are pinning to
+  const getX = (val: number) => isLeft ? val : 100 - val;
 
   const pathVariants: Variants = {
-    closed: { d: "M 0 0 L 100 0 C 100 25, 100 45, 100 50 C 100 70, 100 90, 100 100 L 0 100 Z" },
-    open: { d: "M 0 0 L 55 0 C 55 25, 35 45, 15 50 C 5 70, 15 90, 20 100 L 0 100 Z" },
+    closed: { d: `M ${getX(0)} 0 L ${getX(100)} 0 C ${getX(100)} 25, ${getX(100)} 45, ${getX(100)} 50 C ${getX(100)} 70, ${getX(100)} 90, ${getX(100)} 100 L ${getX(0)} 100 Z` },
+    open: { d: `M ${getX(0)} 0 L ${getX(25)} 0 C ${getX(25)} 25, ${getX(15)} 45, ${getX(10)} 50 C ${getX(5)} 70, ${getX(8)} 90, ${getX(15)} 100 L ${getX(0)} 100 Z` },
   };
 
   const edgeLine: Variants = {
-    closed: { d: "M 100 0 C 100 25, 100 45, 100 50 C 100 70, 100 90, 100 100" },
-    open: { d: "M 55 0 C 55 25, 35 45, 15 50 C 5 70, 15 90, 20 100" }
+    closed: { d: `M ${getX(100)} 0 C ${getX(100)} 25, ${getX(100)} 45, ${getX(100)} 50 C ${getX(100)} 70, ${getX(100)} 90, ${getX(100)} 100` },
+    open: { d: `M ${getX(25)} 0 C ${getX(25)} 25, ${getX(15)} 45, ${getX(10)} 50 C ${getX(5)} 70, ${getX(8)} 90, ${getX(15)} 100` }
   };
 
-  // Generate dense, luxurious fabric folds procedurally
-  const linesCount = 14;
+  const linesCount = 12;
   const foldLines = Array.from({ length: linesCount }).map((_, i) => {
-    const t = (i + 1) / (linesCount + 1); // 0.06 to 0.93
+    const t = (i + 1) / (linesCount + 1);
+    const closedX = getX(t * 100);
 
-    const closedX = t * 100;
-
-    // Open path mapping (simulating the gathering at the knot but opening much wider)
-    const xTop = t * 55;
-    const cp1X = t * 55;
-    const cp2X = t * 35;
-    const xKnot = 1 + t * 14; // Knots bundle tightly near edge
-    const cp3X = t * 5;
-    const cp4X = t * 15;
-    const xBot = t * 20;
+    // Open path logic: gather towards x=0 for left, x=100 for right
+    const xTop = getX(t * 22);
+    const cp1X = getX(t * 22);
+    const cp2X = getX(t * 12);
+    const xKnot = getX(1 + t * 8);
+    const cp3X = getX(t * 5);
+    const cp4X = getX(t * 8);
+    const xBot = getX(t * 12);
 
     return {
       closed: { d: `M ${closedX} 0 C ${closedX} 25, ${closedX} 45, ${closedX} 50 C ${closedX} 70, ${closedX} 90, ${closedX} 100` },
@@ -44,17 +46,25 @@ const CurtainHalf = ({ isRevealed, isLeft = true }: { isRevealed: boolean; isLef
   });
 
   return (
-    <div className="absolute top-0 bottom-0 w-1/2 pointer-events-none" style={{ [isLeft ? 'left' : 'right']: 0, transform: isLeft ? 'none' : 'scaleX(-1)' }}>
+    <motion.div 
+      initial={false}
+      animate={{ 
+        x: isExiting ? (isLeft ? '-100%' : '100%') : '0%',
+        opacity: isExiting ? 0 : 1 
+      }}
+      transition={{ duration: 1.5, ease: 'easeInOut' }}
+      className="absolute top-0 bottom-0 w-1/2 pointer-events-none" 
+      style={{ [isLeft ? 'left' : 'right']: 0 }}
+    >
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full" style={{ filter: isRevealed ? 'drop-shadow(15px 0 25px rgba(0,0,0,1))' : 'none', transition: 'filter 2.8s ease' }}>
         <defs>
-          <linearGradient id="velvetCurtain" x1="0" y1="0" x2="1" y2="0">
+          <linearGradient id={isLeft ? "velvetCurtainL" : "velvetCurtainR"} x1={isLeft ? "0" : "1"} y1="0" x2={isLeft ? "1" : "0"} y2="0">
             <stop offset="0%" stopColor="#1a0505" />
             <stop offset="25%" stopColor="#3d0b0b" />
             <stop offset="50%" stopColor="#5c0a0a" />
             <stop offset="75%" stopColor="#3d0b0b" />
             <stop offset="100%" stopColor="#1a0505" />
           </linearGradient>
-
 
           <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgba(212,175,55,0.7)" />
@@ -70,15 +80,13 @@ const CurtainHalf = ({ isRevealed, isLeft = true }: { isRevealed: boolean; isLef
           initial="closed"
           animate={isRevealed ? "open" : "closed"}
           transition={transition}
-          fill="url(#velvetCurtain)"
+          fill={`url(#${isLeft ? "velvetCurtainL" : "velvetCurtainR"})`}
         />
 
-        {/* Procedural Fabric Folds (Shadows and Peaks) */}
         {foldLines.map((l, i) => {
           const isMajor = i % 3 === 0;
           return (
             <g key={i}>
-              {/* Deep velvet shadows for volume */}
               <motion.path
                 variants={l}
                 initial="closed"
@@ -90,7 +98,6 @@ const CurtainHalf = ({ isRevealed, isLeft = true }: { isRevealed: boolean; isLef
                 vectorEffect="non-scaling-stroke"
                 style={{ mixBlendMode: 'multiply' }}
               />
-              {/* Highlight lines mimicking gold thread or lighting peaks */}
               <motion.path
                 variants={l}
                 initial="closed"
@@ -105,7 +112,6 @@ const CurtainHalf = ({ isRevealed, isLeft = true }: { isRevealed: boolean; isLef
           );
         })}
 
-        {/* Thick Glowing Edge Trim */}
         <motion.path
           variants={edgeLine}
           initial="closed"
@@ -127,17 +133,20 @@ const CurtainHalf = ({ isRevealed, isLeft = true }: { isRevealed: boolean; isLef
           vectorEffect="non-scaling-stroke"
         />
       </svg>
-    </div>
+    </motion.div>
   );
 };
 
-export default function CurtainReveal({ onRevealComplete, children }: CurtainRevealProps) {
+export default function CurtainReveal({ onRevealComplete, children, isExiting }: CurtainRevealProps) {
   const [isRevealed, setIsRevealed] = useState(false);
 
   const triggerReveal = async () => {
     if (isRevealed) return;
     setIsRevealed(true);
 
+    // Removed forced fullscreen to avoid intrusive native browser notifications
+    // The UI remains immersive through the use of '100svh' units
+    /*
     try {
       if (document.documentElement.requestFullscreen) {
         await document.documentElement.requestFullscreen();
@@ -147,6 +156,7 @@ export default function CurtainReveal({ onRevealComplete, children }: CurtainRev
     } catch (e) {
       console.warn("Fullscreen could not be engaged:", e);
     }
+    */
 
     setTimeout(() => {
       onRevealComplete();
@@ -164,8 +174,8 @@ export default function CurtainReveal({ onRevealComplete, children }: CurtainRev
         style={{ pointerEvents: isRevealed ? 'none' : 'auto' }}
       >
 
-        <CurtainHalf isRevealed={isRevealed} isLeft={true} />
-        <CurtainHalf isRevealed={isRevealed} isLeft={false} />
+        <CurtainHalf isRevealed={isRevealed} isLeft={true} isExiting={isExiting} />
+        <CurtainHalf isRevealed={isRevealed} isLeft={false} isExiting={isExiting} />
 
         {/* Central interact area & knot logic */}
         <AnimatePresence>
@@ -229,6 +239,26 @@ export default function CurtainReveal({ onRevealComplete, children }: CurtainRev
                   👆
                 </motion.div>
               </div>
+
+              {/* Subtle Hint Text — Gold and Bold */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.4, 1, 0.4], y: [0, -5, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                style={{
+                  position: 'absolute',
+                  bottom: '12%', // Centered bottom of the screen
+                  color: 'var(--gold)', 
+                  fontFamily: 'Lato, sans-serif',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.4em',
+                  fontWeight: 900,
+                  textTransform: 'uppercase',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+                }}
+              >
+                Tap to Start
+              </motion.p>
             </motion.div>
           )}
         </AnimatePresence>
